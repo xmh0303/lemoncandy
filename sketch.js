@@ -26,15 +26,7 @@ function setup() {
 
 function draw() {
   
-
-  var rectOver = false;
-  var rectSize = 10;
-
-  //**base background
-  var firstSq = color(255);
-  var secondSq = color(50, 50, 130);
-  var thirdSq = color(60);
-  var fourthSq = color(250, 220, 70);
+  //**base stroke setting
 
   var firstLine = color(0);
   var secondLine = color(200, 0, 0);
@@ -45,7 +37,6 @@ function draw() {
   var secondStrk = 0;
   var thirdStrk = 10;
   var fourthStrk = 1;
-  
   
   
   //** division lines
