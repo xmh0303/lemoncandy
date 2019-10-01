@@ -7,7 +7,7 @@ function draw() {
   background(250,193,0);
   randomSeed(0);
 
-  var x, y, r;
+  var x, y;
   var delta = 30;
   var ellipseSize = map(mouseX, 0, windowWidth/3,15,5);
   var ellipseOpacity = map(mouseY, 0, windowHeight, 255, 0);
