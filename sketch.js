@@ -34,4 +34,10 @@ function draw() {
   //ellipse(windowWidth/2 - 200, windowHeight/2, whiteSize, whiteSize);
   //ellipse(windowWidth/2 + 200, windowHeight/2, whiteSize, whiteSize);
   rect(windowWidth/2, windowHeight/2 - 20, 900, 200);
+
+  fill(0);
+  textStyle(BOLD);
+  textSize(70);
+  text('INTO KUSAMA', windowWidth/2, windowHeight/2);
+  textAlign(CENTER);
 }
