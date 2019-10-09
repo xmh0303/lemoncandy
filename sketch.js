@@ -1,43 +1,117 @@
+var fishes = [];
+var leftfishes = [];
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  for (i = 0; i < 200; i++) {
+    fishes[i] = new Fish();
+    leftfishes[i] = new LeftFish();
+  }
 }
 
 function draw() {
+  
+  background(0, 65, 161);
 
-  background(250,193,0);
-  randomSeed(0);
+  for (i = 0; i < fishes.length; i++) {
+    fishes[i].display();
+    fishes[i].move();
+    leftfishes[i].leftdisplay();
+    leftfishes[i].leftmove();
+  }
+}
 
-  var x, y;
-  var delta = 30;
-  var ellipseSize = map(mouseX, 0, windowWidth/3,15,5);
-  var ellipseOpacity = map(mouseY, 0, windowHeight, 255, 0);
-  var whiteSize;
 
-  for (x=0; x<windowWidth; x+=delta){
-    for (y=0; y<windowHeight; y+=delta/2) {
-      
-      noStroke();
-      fill(0,ellipseOpacity);
-      ellipse(x, y, ellipseSize, ellipseSize);
-        
-          
-      }
+function Fish() {
+
+  this.x = random(0, windowWidth);
+  this.y = random(0, windowHeight);
+  this.vx = random(-1,1);
+  this.vy = random(-0.5,0.5);
+  this.display = function() {
+    var fishSize = 16;
+    var fishFin = fishSize / 2;
+    var fishEye = fishSize / 8
+    var fishEyeSize = 2;
+    stroke(255);
+    noFill();
+    ellipseMode(CENTER);
+    ellipse(this.x, this.y, fishSize, fishSize);
+    triangle(this.x + fishSize, this.y + fishFin,
+      this.x + fishFin, this.y,
+      this.x + fishSize, this.y - fishFin);
+    ellipse(this.x - fishEye, this.y - fishEye, 
+            fishEyeSize, fishEyeSize)
+  };
+  this.move = function() {
+    
+    this.x += this.vx;
+    this.y += this.vy; 
+    
+    if (this.x > windowWidth || this.x < 0) {
+      this.vx = - this.vx;
+    }
+    if (this.y > windowHeight || this.y < 0) {
+      this.vy = - this.vx;
     }
     
+    if (mouseIsPressed) {
+      var xdif = abs(this.x-mouseX);
+      var ydif = abs(this.y-mouseY);
+        if ( xdif < 50 + random(-20, 20)) {
+        if ( ydif < 50 + random(-20, 20)) {
+          this.y = this.y + random(-30,30) ;
+          this.x = this.x + random(-30,30) ;
+        }
+      }
+    }
+  };
+}
 
-  whiteSize = 300;
 
-  noStroke();
-  fill(255);
-  rectMode(CENTER);
-  //ellipseMode(CENTER);
-  //ellipse(windowWidth/2 - 200, windowHeight/2, whiteSize, whiteSize);
-  //ellipse(windowWidth/2 + 200, windowHeight/2, whiteSize, whiteSize);
-  rect(windowWidth/2, windowHeight/2 - 20, 900, 200);
+function LeftFish() {
 
-  fill(0);
-  textStyle(BOLD);
-  textSize(70);
-  text('INTO KUSAMA', windowWidth/2, windowHeight/2);
-  textAlign(CENTER);
+  this.x = random(0, windowWidth);
+  this.y = random(0, windowHeight);
+  this.vx = random(-2,1);
+  this.vy = random(-1,2);
+  this.leftdisplay = function() {
+    var fishSize = 12;
+    var fishFin = fishSize / 2;
+    var fishEye = fishSize / 8
+    var fishEyeSize = 1;
+    stroke(255);
+    noFill();
+    ellipseMode(CENTER);
+    ellipse(this.x, this.y, fishSize, fishSize);
+    triangle(this.x - fishSize, this.y - fishFin,
+      this.x - fishFin, this.y,
+      this.x - fishSize, this.y + fishFin);
+    ellipse(this.x + fishEye, this.y - fishEye, 
+            fishEyeSize, fishEyeSize)
+  };
+  this.leftmove = function() {
+    
+    this.x += this.vx;
+    this.y += this.vy; 
+    
+    if (this.x > windowWidth || this.x < 0) {
+      this.vx = - this.vx;
+    }
+    if (this.y > windowHeight || this.y < 0) {
+      this.vy = - this.vx;
+    }
+    
+    if (mouseIsPressed) {
+      var xdif = abs(this.x-mouseX);
+      var ydif = abs(this.y-mouseY);
+        if ( xdif < 50 + random(-20, 20)) {
+        if ( ydif < 50 + random(-20, 20)) {
+          this.y = this.y + random(-15,15) ;
+          this.x = this.x + random(-15,15) ;
+        }
+      }
+    }
+  };
 }
