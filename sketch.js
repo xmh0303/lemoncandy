@@ -81,7 +81,7 @@ function LeftFish() {
     var fishFin = fishSize / 2;
     var fishEye = fishSize / 8
     var fishEyeSize = 1;
-    stroke(255);
+    stroke(255,233,143);
     noFill();
     ellipseMode(CENTER);
     ellipse(this.x, this.y, fishSize, fishSize);
