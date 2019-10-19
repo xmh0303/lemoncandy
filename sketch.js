@@ -1,117 +1,156 @@
-var fishes = [];
-var leftfishes = [];
+let mic;
+// Declare a scaling factor
+let scale = 5;
+// Declare a smooth factor
+let smooth_factor = 0.25;
+// Used for smoothing
+let smoothed = 0;
+var fires = [];
+var smokes = [];
+var numberFire = 50;
+var numberSmoke = 50;
+
+let img;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  mic = new p5.AudioIn(); // open mic input
+  mic.start();
 
-  for (i = 0; i < 200; i++) {
-    fishes[i] = new Fish();
-    leftfishes[i] = new LeftFish();
+  img = loadImage("wood.png");
+
+  for (i = 0; i < numberFire; i++) {
+    fires[i] = new Fire();
+  }
+  for (i = 0; i < numberSmoke; i++) {
+    smokes[i] = new Smoke();
   }
 }
 
 function draw() {
-  
-  background(0, 65, 161);
+  // smooth the rms data by smoothing factor
+  // rms.analyze() return a value between 0 and 1. It's
+  // scaled to height/2 and then multiplied by a scale factor
 
-  for (i = 0; i < fishes.length; i++) {
-    fishes[i].display();
-    fishes[i].move();
-    leftfishes[i].leftdisplay();
-    leftfishes[i].leftmove();
+  let mag = mic.getLevel();
+  smoothed = smoothed * (1 - smooth_factor) + mag * smooth_factor;
+  let scaled = smoothed * (height / 2) * scale;
+
+  background(70, 30, 10);
+  image(
+    img,
+    (1 / 2) * windowWidth - 150,
+    (3 / 4) * windowHeight,
+    300,
+    (1 / 4) * windowHeight
+  );
+
+  frameRate(50);
+
+  let s = new Smoke();
+  smokes.push(s);
+  for (i = 0; i < smokes.length; i++) {
+    smokes[i].smokedisplay();
+    smokes[i].smokemove();
+  }
+
+  let p = new Fire();
+  fires.push(p);
+  for (i = 0; i < fires.length; i++) {
+    fires[i].display((1 / 5) * scaled + 20);
+    fires[i].move();
   }
 }
 
+class Fire {
+  constructor() {
+    this.spread = 80;
+    this.x = random(
+      windowWidth / 2 - this.spread,
+      windowWidth / 2 + this.spread
+    );
+    this.y = random(windowHeight, windowHeight - 100);
+    this.vx = random(-0.1, 0.1);
+    this.vy = random(-3, 0);
+  }
 
-function Fish() {
+  display(scale) {
+    this.scale = scale;
 
-  this.x = random(0, windowWidth);
-  this.y = random(0, windowHeight);
-  this.vx = random(-1,1);
-  this.vy = random(-0.5,0.5);
-  this.display = function() {
-    var fishSize = 16;
-    var fishFin = fishSize / 2;
-    var fishEye = fishSize / 8
-    var fishEyeSize = 2;
-    stroke(255);
-    noFill();
-    ellipseMode(CENTER);
-    ellipse(this.x, this.y, fishSize, fishSize);
-    triangle(this.x + fishSize, this.y + fishFin,
-      this.x + fishFin, this.y,
-      this.x + fishSize, this.y - fishFin);
-    ellipse(this.x - fishEye, this.y - fishEye, 
-            fishEyeSize, fishEyeSize)
-  };
-  this.move = function() {
-    
+    // print("distance: " + distance);
+    var distance = int(
+      dist(this.x, this.y, windowWidth / 2, windowHeight - 100)
+    );
+    // print("opacity: " + opacity);
+    this.opacity = map(distance, 0, windowHeight, 255, 0);
+    var yellow = map(this.y / 2, 0, windowHeight / 8, 0, 40);
+    this.fireSize =
+      (1 / 40) * this.scale * map(distance, 0, windowHeight, 45, -5);
+
+    noStroke();
+    fill(250, yellow, 0, this.opacity - 50);
+    triangle(
+      this.x,
+      this.y,
+      this.x + this.fireSize,
+      this.y,
+      this.x + this.fireSize / 2,
+      this.y - this.fireSize
+    );
+  }
+
+  move() {
     this.x += this.vx;
-    this.y += this.vy; 
-    
-    if (this.x > windowWidth || this.x < 0) {
-      this.vx = - this.vx;
+    this.y += this.vy;
+
+    if (
+      (this.x > (windowWidth * 4) / 5) |
+        (this.x < windowWidth / 5) |
+        (this.y < 0) &&
+      (this.y > -(this.x - windowWidth / 2)) ^ (2 + windowHeight)
+    ) {
+      this.x = random(
+        windowWidth / 2 - this.spread,
+        windowWidth / 2 + this.spread
+      );
+      this.y = random(windowHeight, windowHeight - 100);
     }
-    if (this.y > windowHeight || this.y < 0) {
-      this.vy = - this.vx;
-    }
-    
-    if (mouseIsPressed) {
-      var xdif = abs(this.x-mouseX);
-      var ydif = abs(this.y-mouseY);
-        if ( xdif < 50 + random(-20, 20)) {
-        if ( ydif < 50 + random(-20, 20)) {
-          this.y = this.y + random(-30,30) ;
-          this.x = this.x + random(-30,30) ;
-        }
-      }
-    }
-  };
+  }
 }
 
+class Smoke {
+  constructor() {
+    this.x = windowWidth / 2;
+    this.y = height - 60;
+    this.vy = random(-3, 0);
+    this.vx = random(-0.07, 0.07);
+  }
 
-function LeftFish() {
+  smokedisplay() {
+    var distance = int(
+      dist(this.x, this.y, windowWidth / 2, windowHeight - 100)
+    );
+    this.opacity = map(distance, 0, windowHeight, 20, 0);
+    noStroke();
+    fill(200, this.opacity);
+    ellipse(this.x, this.y, 20, 20);
+  }
 
-  this.x = random(0, windowWidth);
-  this.y = random(0, windowHeight);
-  this.vx = random(-2,1);
-  this.vy = random(-1,2);
-  this.leftdisplay = function() {
-    var fishSize = 12;
-    var fishFin = fishSize / 2;
-    var fishEye = fishSize / 8
-    var fishEyeSize = 1;
-    stroke(255,233,143);
-    noFill();
-    ellipseMode(CENTER);
-    ellipse(this.x, this.y, fishSize, fishSize);
-    triangle(this.x - fishSize, this.y - fishFin,
-      this.x - fishFin, this.y,
-      this.x - fishSize, this.y + fishFin);
-    ellipse(this.x + fishEye, this.y - fishEye, 
-            fishEyeSize, fishEyeSize)
-  };
-  this.leftmove = function() {
-    
+  smokemove() {
+    this.y += this.vy;
     this.x += this.vx;
-    this.y += this.vy; 
-    
-    if (this.x > windowWidth || this.x < 0) {
-      this.vx = - this.vx;
+
+    if (
+      (this.x > (windowWidth * 4) / 5) |
+        (this.x < windowWidth / 5) |
+        (this.y < 0) &&
+      (this.y > -(this.x - windowWidth / 2)) ^ (2 + windowHeight)
+    ) {
+      this.x = random(
+        windowWidth / 2 - this.spread,
+        windowWidth / 2 + this.spread
+      );
+      this.y = random(windowHeight, windowHeight - 100);
     }
-    if (this.y > windowHeight || this.y < 0) {
-      this.vy = - this.vx;
-    }
-    
-    if (mouseIsPressed) {
-      var xdif = abs(this.x-mouseX);
-      var ydif = abs(this.y-mouseY);
-        if ( xdif < 50 + random(-20, 20)) {
-        if ( ydif < 50 + random(-20, 20)) {
-          this.y = this.y + random(-15,15) ;
-          this.x = this.x + random(-15,15) ;
-        }
-      }
-    }
-  };
+  }
 }
