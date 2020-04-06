@@ -14,9 +14,9 @@ let gSlider;
 let bSlider;
 
 function preload() {
-    pattern = loadImage('src/pattern01.png');
-    bamboo = loadImage('src/bamboo.jpg');
-    teapot = loadModel('src/teapot.obj');
+   // pattern = loadImage('src/pattern01.png');
+   // bamboo = loadImage('src/bamboo.jpg');
+    teapot = loadModel('teapot.obj');
 }
 
 function setup() {
