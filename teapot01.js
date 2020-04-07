@@ -35,9 +35,21 @@ function setup() {
     // sliderText = createGraphics(canvasX, canvasY)
 }
 
+var rColor = 30;
+var gColor = 10;
+var bColor = 210;
 
 function draw() {
-    background(190, 150, 10);
+    background(rColor, gColor, bColor);
+    if(rColor <256) {
+        rColor += 1;}
+        else {rColor = 0;}
+    if(gColor <256) {
+        gColor += 0.7;}
+        else {gColor = 0;}
+    if(bColor <256) {
+        bColor += 0.3;}
+        else {bColor = 0;}
     
     graphicColorVal();
     graphics.fill(r,g,b);
