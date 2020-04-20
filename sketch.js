@@ -9,8 +9,8 @@ var t1 = "Press the Arrow Key to Spin.";
 var t2= 'Press Enter/Space Key to Stop';
 
 function preload() {
-  teapot = loadModel('src/teapot.obj');
-  raptor1 = loadModel('src/raptor1.obj');
+  // teapot = loadModel('src/teapot.obj');
+  raptor1 = loadModel('raptor1.obj');
 }
 
 function setup() {
